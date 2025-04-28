@@ -9,13 +9,6 @@ Sub transferirdatosotrahoja()
     Dim ultimafila As Long
     Dim ultimafilaauxiliar As Long
     Dim cont As Long
-
-    ' NUEVO: Limpiar previamente el rango A3:F en hoja PEDIDO
-    With Sheets("PEDIDO")
-        If Application.WorksheetFunction.CountA(.Range("A3:F" & .Rows.Count)) > 0 Then
-            .Range("A3:F" & .Cells(.Rows.Count, "A").End(xlUp).Row).ClearContents
-        End If
-    End With
     
     ultimafila = Sheets("LISTA").Range("A" & Rows.Count).End(xlUp).Row
     
