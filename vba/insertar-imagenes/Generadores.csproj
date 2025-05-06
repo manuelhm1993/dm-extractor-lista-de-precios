@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{000B4102-23F5-4058-96D9-456477A18DA3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Generadores</RootNamespace>
+    <AssemblyName>Generadores</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+	  
+	<!-- Microsoft OLE Excel -->
+	<COMReference Include="Microsoft.Office.Interop.Excel">
+		<Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+		<VersionMajor>1</VersionMajor>
+		<VersionMinor>9</VersionMinor>
+		<Lcid>0</Lcid>
+		<WrapperTool>primary</WrapperTool>
+		<Isolated>False</Isolated>
+		<EmbedInteropTypes>True</EmbedInteropTypes>
+	</COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Generar.LibroCompras.XLSCOMPRADOM.cs" />
+	<!-- Compila el generador xlista -->
+	<Compile Include="Generar.PrecioArticulos.XLSLISTA.cs" />
+	<!-- Compila el generador xlista -->
+    <Compile Include="Generar.LibroVentas.XLSVENTA.cs" />
+    <Compile Include="Generar.Archivo609_PagosExterior.NCFEXT.cs" />
+    <Compile Include="Generar.Archivo608_Anulados.NCFAV.cs" />
+    <Compile Include="Generar.Archivo607_Ventas.NCFVTA.cs" />
+    <Compile Include="Generar.Archivo606_Compras.NCFCOM.cs" />
+    <Compile Include="Generar.LibroCompras.XLSCOMPRA.cs" />
+    <Compile Include="Generar.LibroVentas.XLSVENTADOM.cs" />
+    <Compile Include="Generar.RelacionDetalladaISLRRetenido.XMLAD2.cs" />
+    <Compile Include="Generar.IVA.cs" />
+    <Compile Include="Generar.RelacionDetalladaISLRRetenido.XMLADM.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Softech.Generar.Administrativo.Utilitarios.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PlantillaXLSCOMPRA.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="PlantillaXLSVENTA.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="PlantillaXLSVENTADOM.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="PXLSNOM1.xlsx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
