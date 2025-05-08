@@ -1,68 +1,46 @@
 Private Sub Workbook_Open()
-    ' Llamar a la función al abrir el archivo
-    Call convertirTextoANumero
+    ' Llamar al procedimiento genérico para las columnas E y F
+    convertirTextoANumero ThisWorkbook.Sheets("LISTA").Range("E3")
+    convertirTextoANumero ThisWorkbook.Sheets("LISTA").Range("F3")
 End Sub
 
-Sub convertirTextoANumero()
+Sub convertirTextoANumero(celdaInicio As Range)
     Dim ws As Worksheet
-    Dim ultimaFilaE As Long, ultimaFilaF As Long
-    Dim rangoE As Range, rangoF As Range
+    Dim fila As Long
+    Dim ultimaFila As Long
     Dim celda As Range
     Dim valor As String
     Dim numero As Double
 
-    ' Definir la hoja de trabajo (ajusta el nombre según tu hoja)
-    Set ws = ThisWorkbook.Sheets("LISTA")
+    ' Obtener la hoja desde la celda inicial
+    Set ws = celdaInicio.Worksheet
 
-    ' Encontrar la última fila con datos en columna E y F
-    ultimaFilaE = ws.Cells(ws.Rows.Count, "E").End(xlUp).Row
-    ultimaFilaF = ws.Cells(ws.Rows.Count, "F").End(xlUp).Row
+    ' Determinar la última fila de la columna especificada
+    ultimaFila = ws.Cells(ws.Rows.Count, celdaInicio.Column).End(xlUp).Row
 
-    ' Convertir texto a número en columna E
-    If ultimaFilaE >= 3 Then
-        Set rangoE = ws.Range("E3:E" & ultimaFilaE)
-        For Each celda In rangoE
-            valor = Trim(celda.Value)
-            If InStr(valor, ",") > 0 Then
-                ' Eliminar cualquier separador de miles y mantener el decimal
-                If Len(Split(valor, ",")(1)) > 2 Then
-                    valor = Replace(valor, ".", "") ' Eliminar punto si es de miles
-                    valor = Replace(valor, ",", ".") ' Reemplazar coma decimal
-                Else
-                    valor = Replace(valor, ",", ".") ' Solo reemplazo de decimal
-                End If
-                ' Intentar la conversión a número
-                If IsNumeric(valor) Then
-                    numero = CDbl(valor)
-                    celda.Value = numero
-                    celda.NumberFormat = "0.00"
-                End If
+    ' Recorrer el rango desde la celda inicial hasta la última fila detectada
+    For fila = celdaInicio.Row To ultimaFila
+        Set celda = ws.Cells(fila, celdaInicio.Column)
+        valor = Trim(celda.Value)
+
+        ' Verificar si el valor contiene números
+        If Len(valor) > 0 And IsNumeric(Replace(valor, ",", ".")) Then
+            ' Reemplazar coma decimal por punto para conversión
+            valor = Replace(valor, ",", ".")
+            
+            ' Intentar convertir a número de forma segura
+            On Error Resume Next
+            numero = CDbl(valor)
+            On Error GoTo 0
+            
+            ' Verificación final de número correcto
+            If numero <> 0 Or valor = "0" Then
+                ' Asignar el valor convertido y aplicar formato numérico
+                celda.Value = numero
+                celda.NumberFormat = "0.00"
             End If
-        Next celda
-    End If
+        End If
+    Next fila
 
-    ' Convertir texto a número en columna F
-    If ultimaFilaF >= 3 Then
-        Set rangoF = ws.Range("F3:F" & ultimaFilaF)
-        For Each celda In rangoF
-            valor = Trim(celda.Value)
-            If InStr(valor, ",") > 0 Then
-                ' Eliminar cualquier separador de miles y mantener el decimal
-                If Len(Split(valor, ",")(1)) > 2 Then
-                    valor = Replace(valor, ".", "") ' Eliminar punto si es de miles
-                    valor = Replace(valor, ",", ".") ' Reemplazar coma decimal
-                Else
-                    valor = Replace(valor, ",", ".") ' Solo reemplazo de decimal
-                End If
-                ' Intentar la conversión a número
-                If IsNumeric(valor) Then
-                    numero = CDbl(valor)
-                    celda.Value = numero
-                    celda.NumberFormat = "0.00"
-                End If
-            End If
-        Next celda
-    End If
-
-    MsgBox "Conversión de texto a número completada en columnas E y F.", vbInformation
+    MsgBox "Conversión completada para la columna " & celdaInicio.Address(0, 0), vbInformation
 End Sub
