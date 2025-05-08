@@ -6,10 +6,13 @@ using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
+using System.Linq;
+
 namespace Softech.Administrativo.Generacion
 {
     public static class XLSLIS
     {
+        #region Generar
         public static void Generar(DataSet datos, Dictionary<string, object> filtros, string rutaSalida, string nombreArchivo)
         {
             if (datos == null || datos.Tables.Count == 0)
@@ -23,6 +26,9 @@ namespace Softech.Administrativo.Generacion
             string rutaPlantilla = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generadores" + "\\PlantillaXLSLISTA.xlsm");
 
             File.Copy(rutaPlantilla, rutaArchivo, true);
+
+            // Validar la insersión de imágenes
+            // InsertarImagenesEnHoja(rutaArchivo, @"C:\EXPORTA");
 
             using (SpreadsheetDocument doc = SpreadsheetDocument.Open(rutaArchivo, true))
             {
@@ -40,26 +46,30 @@ namespace Softech.Administrativo.Generacion
                 sheetData.RemoveAllChildren<Row>(); // Borra todas las filas
                 uint filaActual = 3;
 
+                // Obtener el número de registros
+                //int numeroRegistros = ObtenerNumeroRegistros(datos);
+
                 foreach (DataRow row in tabla.Rows)
                 {
                     Row nuevaFila = new Row() { RowIndex = filaActual };
 
                     nuevaFila.Append(
-                        CrearCeldaTexto("A", filaActual, row["co_art"].ToString()),
-                        CrearCeldaTexto("B", filaActual, row["art_des"].ToString()),
-                        //CrearCeldaTexto("C", filaActual, ObtenerReferencia(row)),
-                        CrearCeldaTexto("C", filaActual, row["co_cat"].ToString()),
-                        CrearCeldaTexto("D", filaActual, row["cat_des"].ToString()),
-                        CrearCeldaNumero("E", filaActual, row["Precio01"]),
-                        CrearCeldaNumero("F", filaActual, row["StockActual"]),
-                        CrearCeldaNumero("G", filaActual, 0),
-                        CrearCeldaTexto("H", filaActual, row["co_art"].ToString())
-                    );
+                            CrearCeldaTexto("A", filaActual, row["co_art"].ToString()),
+                            CrearCeldaTexto("B", filaActual, row["art_des"].ToString()),
+                            //CrearCeldaTexto("C", filaActual, ObtenerReferencia(row)),
+                            CrearCeldaTexto("C", filaActual, row["co_cat"].ToString()),
+                            CrearCeldaTexto("D", filaActual, row["cat_des"].ToString()),
+                            CrearCeldaTexto("E", filaActual, row["Precio01"].ToString()),
+                            CrearCeldaTexto("F", filaActual, row["StockActual"].ToString()),
+                            CrearCeldaNumero("G", filaActual, 0),
+                            CrearCeldaTexto("H", filaActual, row["co_art"].ToString())
+                        );
 
                     sheetData.AppendChild(nuevaFila);
                     filaActual++;
                 }
 
+                // Guardar el documento
                 wsPart.Worksheet.Save();
             }
         }
@@ -114,5 +124,21 @@ namespace Softech.Administrativo.Generacion
                 DataType = CellValues.String
             };
         }
+        #endregion
+
+        #region Recuperar número de registros
+        private static int ObtenerNumeroRegistros(DataSet datos)
+        {
+            if (datos.Tables.Contains("MetaData"))
+            {
+                DataTable metaData = datos.Tables["MetaData"];
+                if (metaData.Rows.Count > 0)
+                {
+                    return Convert.ToInt32(metaData.Rows[0]["Registros"]);
+                }
+            }
+            return 0;
+        }
+        #endregion
     }
 }

@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Globalization;
 
+using System.IO;
+using System.Diagnostics;
 
 namespace Softech.Administrativo.Extraccion
 {
@@ -37,7 +39,7 @@ namespace Softech.Administrativo.Extraccion
                 #region Armar query
 
                 StringBuilder query = new StringBuilder();
-                query.Append("exec ARepArticuloConPrecio1  ");
+                query.Append("exec ARepArticuloConPrecioLista  ");
                 //------------------------ Filtros
                 query.Append("@sCo_FechaMRLL_d=@f_fecha_i, ");
                 query.Append("@sCo_FechaMRLL_h=@f_fecha_f, ");
@@ -50,10 +52,11 @@ namespace Softech.Administrativo.Extraccion
                 query.Append("@sCo_Categoria_d=@f_filtro5_i, ");
                 query.Append("@sCo_Categoria_h=@f_filtro5_f, ");
                 //------------------------ Parámetros
-                query.Append("@sCo_Almacen=@sCo_Almacen, ");
-                query.Append("@sCo_Precio05=@sCo_Precio05, ");
+                query.Append("@sCo_Almacen1=@sCo_Almacen1, ");
+                query.Append("@sCo_Almacen2=@sCo_Almacen2, ");
                 query.Append("@sCo_Precio01=@sCo_Precio01, ");
-                query.Append("@sCo_Color_d=@sCo_Color ");
+                query.Append("@sCo_Color=@sCo_Color, ");
+                query.Append("@sCo_NivelStock=@sCo_NivelStock ");
 
                 SqlCommand comando = new SqlCommand(query.ToString(), conexion);
 
@@ -75,10 +78,11 @@ namespace Softech.Administrativo.Extraccion
                 comando.Parameters.Add(new SqlParameter("@f_filtro5_i", SqlDbType.Char));
                 comando.Parameters.Add(new SqlParameter("@f_filtro5_f", SqlDbType.Char));
                 //------------------------ Parámetros
-                comando.Parameters.Add(new SqlParameter("@sCo_Almacen", SqlDbType.Char));
-                comando.Parameters.Add(new SqlParameter("@sCo_Precio05", SqlDbType.Char));
+                comando.Parameters.Add(new SqlParameter("@sCo_Almacen1", SqlDbType.Char));
+                comando.Parameters.Add(new SqlParameter("@sCo_Almacen2", SqlDbType.Char));
                 comando.Parameters.Add(new SqlParameter("@sCo_Precio01", SqlDbType.Char));
                 comando.Parameters.Add(new SqlParameter("@sCo_Color", SqlDbType.Char));
+                comando.Parameters.Add(new SqlParameter("@sCo_NivelStock", SqlDbType.Char));
 
                 //------------------------ Filtros
                 comando.Parameters["@f_fecha_i"].IsNullable = true;
@@ -111,17 +115,20 @@ namespace Softech.Administrativo.Extraccion
                 comando.Parameters["@f_filtro5_f"].IsNullable = true;
                 comando.Parameters["@f_filtro5_f"].SqlValue = DBNull.Value;
                 //------------------------ Parámetros
-                comando.Parameters["@sCo_Almacen"].IsNullable = true;
-                comando.Parameters["@sCo_Almacen"].SqlValue = DBNull.Value;
+                comando.Parameters["@sCo_Almacen1"].IsNullable = true;
+                comando.Parameters["@sCo_Almacen1"].SqlValue = DBNull.Value;
 
-                comando.Parameters["@sCo_Precio05"].IsNullable = true;
-                comando.Parameters["@sCo_Precio05"].SqlValue = DBNull.Value;
+                comando.Parameters["@sCo_Almacen2"].IsNullable = true;
+                comando.Parameters["@sCo_Almacen2"].SqlValue = DBNull.Value;
 
                 comando.Parameters["@sCo_Precio01"].IsNullable = true;
                 comando.Parameters["@sCo_Precio01"].SqlValue = DBNull.Value;
 
                 comando.Parameters["@sCo_Color"].IsNullable = true;
                 comando.Parameters["@sCo_Color"].SqlValue = DBNull.Value;
+
+                comando.Parameters["@sCo_NivelStock"].IsNullable = true;
+                comando.Parameters["@sCo_NivelStock"].SqlValue = DBNull.Value;
 
                 #endregion
 
@@ -164,17 +171,20 @@ namespace Softech.Administrativo.Extraccion
                 if (filtros.ContainsKey("f_filtro5_f") && !Equals((String)filtros["f_filtro5_f"], null))
                     comando.Parameters["@f_filtro5_f"].SqlValue = filtros["f_filtro5_f"];
                 //------------------------ Parámetros
-                if (filtros.ContainsKey("sCo_Almacen") && !Equals((String)filtros["sCo_Almacen"], null))
-                    comando.Parameters["@sCo_Almacen"].SqlValue = filtros["sCo_Almacen"];
+                if (filtros.ContainsKey("sCo_Almacen1") && !Equals((String)filtros["sCo_Almacen1"], null))
+                    comando.Parameters["@sCo_Almacen1"].SqlValue = filtros["sCo_Almacen1"];
 
-                if (filtros.ContainsKey("sCo_Precio05") && !Equals((String)filtros["sCo_Precio05"], null))
-                    comando.Parameters["@sCo_Precio05"].SqlValue = filtros["sCo_Precio05"];
+                if (filtros.ContainsKey("sCo_Almacen2") && !Equals((String)filtros["sCo_Almacen2"], null))
+                    comando.Parameters["@sCo_Almacen2"].SqlValue = filtros["sCo_Almacen2"];
 
                 if (filtros.ContainsKey("sCo_Precio01") && !Equals((String)filtros["sCo_Precio01"], null))
                     comando.Parameters["@sCo_Precio01"].SqlValue = filtros["sCo_Precio01"];
 
                 if (filtros.ContainsKey("sCo_Color") && !Equals((String)filtros["sCo_Color"], null))
                     comando.Parameters["@sCo_Color"].SqlValue = filtros["sCo_Color"];
+
+                if (filtros.ContainsKey("sCo_NivelStock") && !Equals((String)filtros["sCo_NivelStock"], null))
+                    comando.Parameters["@sCo_NivelStock"].SqlValue = filtros["sCo_NivelStock"];
 
                 #endregion
 
@@ -185,6 +195,13 @@ namespace Softech.Administrativo.Extraccion
 
                 SqlDataAdapter da = new SqlDataAdapter(comando);
                 da.Fill(extraccionDataSet, "XLSLISTA");
+
+                // Contar los registros totales
+                int registros = ContarRegistros(extraccionDataSet);
+
+                // Agregar los registros al extractorDataSet
+                AgregarRegistrosMetadata(extraccionDataSet, registros);
+
                 for (int i = 0; i < extraccionDataSet.Tables.Count; i++)
                 {
                     for (int j = 0; j < extraccionDataSet.Tables[i].Columns.Count; j++)
@@ -196,5 +213,31 @@ namespace Softech.Administrativo.Extraccion
 
             return extraccionDataSet;
         }
+
+        private static int ContarRegistros(DataSet dataSet)
+        {
+            if (dataSet.Tables.Contains("XLSLISTA"))
+            {
+                int count = dataSet.Tables["XLSLISTA"].Rows.Count;
+                return count;
+            }
+            return 0;
+        }
+
+        private static void AgregarRegistrosMetadata(DataSet dataSet, int registros)
+        {
+            // Crear una tabla para almacenar el número de registros
+            DataTable metaDataTable = new DataTable("MetaData");
+            metaDataTable.Columns.Add("Registros", typeof(int));
+
+            // Crear una fila con el conteo
+            DataRow row = metaDataTable.NewRow();
+            row["Registros"] = registros;
+            metaDataTable.Rows.Add(row);
+
+            // Añadir la tabla al DataSet
+            dataSet.Tables.Add(metaDataTable);
+        }
+
     }
 }
