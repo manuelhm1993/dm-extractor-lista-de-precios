@@ -8,6 +8,8 @@ Sub convertirTextoANumero()
     Dim ultimaFilaE As Long, ultimaFilaF As Long
     Dim rangoE As Range, rangoF As Range
     Dim celda As Range
+    Dim valor As String
+    Dim numero As Double
 
     ' Definir la hoja de trabajo (ajusta el nombre según tu hoja)
     Set ws = ThisWorkbook.Sheets("LISTA")
@@ -16,23 +18,48 @@ Sub convertirTextoANumero()
     ultimaFilaE = ws.Cells(ws.Rows.Count, "E").End(xlUp).Row
     ultimaFilaF = ws.Cells(ws.Rows.Count, "F").End(xlUp).Row
 
-    ' Verificar que haya datos a partir de E3 y F3
+    ' Convertir texto a número en columna E
     If ultimaFilaE >= 3 Then
         Set rangoE = ws.Range("E3:E" & ultimaFilaE)
         For Each celda In rangoE
-            If IsNumeric(Replace(celda.Value, ",", ".")) Then
-                celda.Value = CDbl(Replace(celda.Value, ",", "."))
-                celda.NumberFormat = "0.00" ' Formato numérico con dos decimales
+            valor = Trim(celda.Value)
+            If InStr(valor, ",") > 0 Then
+                ' Eliminar cualquier separador de miles y mantener el decimal
+                If Len(Split(valor, ",")(1)) > 2 Then
+                    valor = Replace(valor, ".", "") ' Eliminar punto si es de miles
+                    valor = Replace(valor, ",", ".") ' Reemplazar coma decimal
+                Else
+                    valor = Replace(valor, ",", ".") ' Solo reemplazo de decimal
+                End If
+                ' Intentar la conversión a número
+                If IsNumeric(valor) Then
+                    numero = CDbl(valor)
+                    celda.Value = numero
+                    celda.NumberFormat = "0.00"
+                End If
             End If
         Next celda
     End If
 
+    ' Convertir texto a número en columna F
     If ultimaFilaF >= 3 Then
         Set rangoF = ws.Range("F3:F" & ultimaFilaF)
         For Each celda In rangoF
-            If IsNumeric(Replace(celda.Value, ",", ".")) Then
-                celda.Value = CDbl(Replace(celda.Value, ",", "."))
-                celda.NumberFormat = "0.00" ' Formato numérico con dos decimales
+            valor = Trim(celda.Value)
+            If InStr(valor, ",") > 0 Then
+                ' Eliminar cualquier separador de miles y mantener el decimal
+                If Len(Split(valor, ",")(1)) > 2 Then
+                    valor = Replace(valor, ".", "") ' Eliminar punto si es de miles
+                    valor = Replace(valor, ",", ".") ' Reemplazar coma decimal
+                Else
+                    valor = Replace(valor, ",", ".") ' Solo reemplazo de decimal
+                End If
+                ' Intentar la conversión a número
+                If IsNumeric(valor) Then
+                    numero = CDbl(valor)
+                    celda.Value = numero
+                    celda.NumberFormat = "0.00"
+                End If
             End If
         Next celda
     End If
