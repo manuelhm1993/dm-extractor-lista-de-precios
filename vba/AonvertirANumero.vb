@@ -36,8 +36,6 @@ End Sub
 
 Function reemplazarComasPorPuntos(valor As String) As String
     ' Función que reemplaza comas con puntos en el valor dado
-    If InStr(valor, ",") > 0 Then
-        valor = Replace(valor, ",", ".")
-    End If
+    valor = Replace(valor, ",", ".")
     reemplazarComasPorPuntos = valor
 End Function
