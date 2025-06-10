@@ -195,8 +195,11 @@ namespace Softech.Administrativo.Generacion
                 documento = UpdateValue("D" + fila, r["cat_des"], 11, CellValues.String, documento);
                 documento = UpdateValue("E" + fila, r["Precio01"], 11, CellValues.Number, documento);
                 documento = UpdateValue("F" + fila, r["StockActual"], 11, CellValues.Number, documento);
-                documento = UpdateValue("G" + fila, Decimal.Zero, 11, CellValues.Number, documento);
+                /*documento = UpdateValue("G" + fila, Decimal.Zero, 11, CellValues.Number, documento);
                 documento = UpdateValue("H" + fila, r["co_art"], 11, CellValues.String, documento);
+                */
+                documento = UpdateValue("G" + fila, r["co_art"], 11, CellValues.String, documento);
+                documento = UpdateValue("H" + fila, Decimal.Zero, 11, CellValues.Number, documento);
 
                 ultimaFila = i + 2;
             }
